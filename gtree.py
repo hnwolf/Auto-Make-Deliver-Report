@@ -21,9 +21,12 @@ LOC_DECO = 114
 LOC_FILE = 'loc.txt'
 
 TOTAL_PAGE_COUNT = 0
+DOC_PAGE_COUNT = 0
 TOTAL_LOC_INSERTION = 0
 TOTAL_LOC_DELETIONS = 0
 PC_STR = 'Total Pages count:'
+DOC_PC_STR = 'Total pages for doc PDF:'
+SOURCE_PC_STR = 'Total pages for source code PDF:'
 LOC_STR = 'Total Lines count:'
 
 
@@ -53,6 +56,7 @@ def tree(dir, padding, print_files=False, isLast=False, isFirst=False,
          locs=None):
     global TOTAL_LOC_INSERTION
     global TOTAL_LOC_DELETIONS
+    global DOC_PAGE_COUNT
 
     if isFirst:
         print padding.decode('utf8')[:-1].encode('utf8') + dir + '\n|'
@@ -91,15 +95,19 @@ def tree(dir, padding, print_files=False, isLast=False, isFirst=False,
             else:
                 tree(path, padding + '|', print_files, isLast, False, locs)
         else:
+            page_num = get_page_num(path)
             if isLast:
                 l = len(padding) + len(file) + 5
                 if file in locs:
+
                     TOTAL_LOC_INSERTION += int(locs[file][0])
                     TOTAL_LOC_DELETIONS += int(locs[file][1])
+
                     print padding + '\---' + file + ' ' + \
-                          recur_deli(LOC_DECO-l+1) + locs[file][0] + \
-                          ' insertions(+), ' + locs[file][1].replace('-','') +\
-                          ' deletions(-)'
+                        recur_deli(PAGE_DECO - l + 1) + page_num + \
+                        recur_deli(LOC_DECO - PAGE_DECO - len(page_num)) + locs[file][0] + \
+                        ' insertions(+), ' + locs[file][1].replace('-', '') + \
+                        ' deletions(-)'
                     if len(locs[file]) == 3:
                         # Pull commit message
                         s = locs[file][2]
@@ -109,8 +117,9 @@ def tree(dir, padding, print_files=False, isLast=False, isFirst=False,
                               ss
                     print padding
                 else:
+                    DOC_PAGE_COUNT += int(page_num)
                     print padding + '\---' + file + ' ' + \
-                          recur_deli(PAGE_DECO - l + 1) + get_page_num(path)
+                          recur_deli(PAGE_DECO - l + 1) + page_num
                     print padding
             else:
                 l = len(padding) + len(file) + 5
@@ -118,9 +127,10 @@ def tree(dir, padding, print_files=False, isLast=False, isFirst=False,
                     TOTAL_LOC_INSERTION += int(locs[file][0])
                     TOTAL_LOC_DELETIONS += int(locs[file][1])
                     print padding + '|---' + file + ' ' + \
-                          recur_deli(LOC_DECO-l+1) + locs[file][0] + \
-                          ' insertions(+), ' + locs[file][1].replace('-','') +\
-                          ' deletions(-)'
+                        recur_deli(PAGE_DECO - l + 1) + page_num + \
+                        recur_deli(LOC_DECO - PAGE_DECO - len(page_num)) + locs[file][0] + \
+                        ' insertions(+), ' + locs[file][1].replace('-', '') +\
+                        ' deletions(-)'
                     if len(locs[file]) == 3:
                         # Pull commit message
                         s = locs[file][2]
@@ -130,13 +140,17 @@ def tree(dir, padding, print_files=False, isLast=False, isFirst=False,
                               '- ' + ss
                         print padding + '|'
                 else:
+                    DOC_PAGE_COUNT += int(page_num)
                     print padding + '|---' + file + ' ' + \
-                          recur_deli(PAGE_DECO - l + 1) + get_page_num(path)
+                        recur_deli(PAGE_DECO - l + 1) + page_num
 
 
 def main():
     global TOTAL_LOC_INSERTION
     global TOTAL_LOC_DELETIONS
+    global DOC_PAGE_COUNT
+    global DOC_PC_STR
+    global SOURCE_PC_STR
 
     parser = optparse.OptionParser(usage="usage: %prog [options]",
                                    version="%prog 1.0")
@@ -164,6 +178,10 @@ def main():
             else:
                 locs[loc[0]] = (loc[1], loc[2])
         tree(path, '', True, False, True, locs)
+        print DOC_PC_STR + recur_deli(PAGE_DECO - len(DOC_PC_STR) + 1) + \
+              str(DOC_PAGE_COUNT) + ' pages'
+        print SOURCE_PC_STR + recur_deli(PAGE_DECO - len(SOURCE_PC_STR) + 1) + \
+              str(TOTAL_PAGE_COUNT - DOC_PAGE_COUNT) + ' pages'
         print PC_STR + recur_deli(PAGE_DECO - len(PC_STR) + 1) + \
               str(TOTAL_PAGE_COUNT) + ' pages'
         print LOC_STR + recur_deli(LOC_DECO - len(LOC_STR) + 1) + \

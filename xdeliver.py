@@ -81,15 +81,16 @@ def create_folder(project_name, topic, msg=None):
         directory = '%s_%s' % (project_name, topic)
     else:
         directory = '%s' % topic
+
     if not os.path.exists(directory):
         LOG.info('|_______ Create folder: %s', directory)
         os.makedirs(directory)
-        if msg is not None:
-            LF.write(directory + '|' + msg + '\n')
     else:
         LOG.info('|_______ Folder %s existed!', directory)
-        if msg is not None:
-            LF.write((directory + '|' + msg + '\n').encode('utf-8'))
+
+    if msg is not None:
+        LF.write((directory + '|' + msg + '\n').encode('utf-8'))
+
     return directory
 
 
@@ -205,7 +206,7 @@ def main():
 
         # check invalid username
         except gssh.gerritsite.InvalidUserError:
-            print('INVALID USERNAME: ' + user)
+            LOG.error('INVALID USERNAME: ' + user)
             break
 
         LOG.info("| Total gerrit results: %d", len(plist))
@@ -223,9 +224,13 @@ def main():
             else:
                 name = topic.change
             for num, ps in pss.iteritems():
-                patch_urls[num] = PROTO + GERRIT_HOST + \
-                                  '/gitweb?p=' + p.repo_name + \
-                                  '.git;a=patch;h=' + \
+                # patch_urls[num] = PROTO + GERRIT_HOST + \
+                #                  '/gitweb?p=' + p.repo_name + \
+                #                  '.git;a=patch;h=' + \
+                #                  ps.raw['revision']
+                patch_urls[num] = PROTO + 'git.openstack.org' + \
+                                  '/cgit/' + p.repo_name + \
+                                  '/patch/?id=' + \
                                   ps.raw['revision']
 
             LOG.info('|____ Project: %s', project_name)

@@ -15,8 +15,8 @@ from pyPdf import PdfFileReader
 import optparse
 
 # Delimiter
-PAGE_DECO = 91
-LOC_DECO = 114
+PAGE_DECO = 113
+LOC_DECO = 138
 
 LOC_FILE = 'loc.txt'
 
@@ -25,8 +25,6 @@ DOC_PAGE_COUNT = 0
 TOTAL_LOC_INSERTION = 0
 TOTAL_LOC_DELETIONS = 0
 PC_STR = 'Total Pages count:'
-DOC_PC_STR = 'Total pages for doc PDF:'
-SOURCE_PC_STR = 'Total pages for source code PDF:'
 LOC_STR = 'Total Lines count:'
 
 
@@ -149,8 +147,6 @@ def main():
     global TOTAL_LOC_INSERTION
     global TOTAL_LOC_DELETIONS
     global DOC_PAGE_COUNT
-    global DOC_PC_STR
-    global SOURCE_PC_STR
 
     parser = optparse.OptionParser(usage="usage: %prog [options]",
                                    version="%prog 1.0")
@@ -165,9 +161,13 @@ def main():
     locr = get_loc()
     locs = {}
     if isdir(path):
-        print "                                                         " \
-              "                         [Page count (for documents)]    " \
-              "   [Line count (for source code)]"
+        # print "                                                         " \
+        #       "                         [Page count (for documents)]    " \
+        #       "   [Line count (for source code)]"
+        print "                                            " \
+              "[Page count (for documents)]   [Page count (for source code)]" \
+              "  [Page count (for both)]  [Line count (for source code)]"
+
         print "\nFolder PATH listing"
         for line in locr:
             loc = line.split('|')
@@ -178,9 +178,9 @@ def main():
             else:
                 locs[loc[0]] = (loc[1], loc[2])
         tree(path, '', True, False, True, locs)
-        print DOC_PC_STR + recur_deli(PAGE_DECO - len(DOC_PC_STR) + 1) + \
+        print PC_STR + recur_deli(50 - len(PC_STR)) + \
               str(DOC_PAGE_COUNT) + ' pages'
-        print SOURCE_PC_STR + recur_deli(PAGE_DECO - len(SOURCE_PC_STR) + 1) + \
+        print PC_STR + recur_deli(82 - len(PC_STR)) + \
               str(TOTAL_PAGE_COUNT - DOC_PAGE_COUNT) + ' pages'
         print PC_STR + recur_deli(PAGE_DECO - len(PC_STR) + 1) + \
               str(TOTAL_PAGE_COUNT) + ' pages'

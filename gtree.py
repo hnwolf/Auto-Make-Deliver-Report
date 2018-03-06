@@ -15,7 +15,9 @@ from pyPdf import PdfFileReader
 import optparse
 
 # Delimiter
-PAGE_DECO = 113
+PAGE_DECO_1 = 50
+PAGE_DECO_2 = 82
+PAGE_DECO_3 = 113
 LOC_DECO = 138
 
 LOC_FILE = 'loc.txt'
@@ -102,8 +104,8 @@ def tree(dir, padding, print_files=False, isLast=False, isFirst=False,
                     TOTAL_LOC_DELETIONS += int(locs[file][1])
 
                     print padding + '\---' + file + ' ' + \
-                        recur_deli(PAGE_DECO - l + 1) + page_num + \
-                        recur_deli(LOC_DECO - PAGE_DECO - len(page_num)) + locs[file][0] + \
+                        recur_deli(PAGE_DECO_3 - l + 1) + page_num + \
+                        recur_deli(LOC_DECO - PAGE_DECO_3 - len(page_num)) + locs[file][0] + \
                         ' insertions(+), ' + locs[file][1].replace('-', '') + \
                         ' deletions(-)'
                     if len(locs[file]) == 3:
@@ -117,7 +119,7 @@ def tree(dir, padding, print_files=False, isLast=False, isFirst=False,
                 else:
                     DOC_PAGE_COUNT += int(page_num)
                     print padding + '\---' + file + ' ' + \
-                          recur_deli(PAGE_DECO - l + 1) + page_num
+                          recur_deli(PAGE_DECO_3 - l + 1) + page_num
                     print padding
             else:
                 l = len(padding) + len(file) + 5
@@ -125,8 +127,8 @@ def tree(dir, padding, print_files=False, isLast=False, isFirst=False,
                     TOTAL_LOC_INSERTION += int(locs[file][0])
                     TOTAL_LOC_DELETIONS += int(locs[file][1])
                     print padding + '|---' + file + ' ' + \
-                        recur_deli(PAGE_DECO - l + 1) + page_num + \
-                        recur_deli(LOC_DECO - PAGE_DECO - len(page_num)) + locs[file][0] + \
+                        recur_deli(PAGE_DECO_3 - l + 1) + page_num + \
+                        recur_deli(LOC_DECO - PAGE_DECO_3 - len(page_num)) + locs[file][0] + \
                         ' insertions(+), ' + locs[file][1].replace('-', '') +\
                         ' deletions(-)'
                     if len(locs[file]) == 3:
@@ -140,7 +142,7 @@ def tree(dir, padding, print_files=False, isLast=False, isFirst=False,
                 else:
                     DOC_PAGE_COUNT += int(page_num)
                     print padding + '|---' + file + ' ' + \
-                        recur_deli(PAGE_DECO - l + 1) + page_num
+                        recur_deli(PAGE_DECO_3 - l + 1) + page_num
 
 
 def main():
@@ -178,11 +180,11 @@ def main():
             else:
                 locs[loc[0]] = (loc[1], loc[2])
         tree(path, '', True, False, True, locs)
-        print PC_STR + recur_deli(50 - len(PC_STR)) + \
+        print PC_STR + recur_deli(PAGE_DECO_1 - len(PC_STR)) + \
               str(DOC_PAGE_COUNT) + ' pages'
-        print PC_STR + recur_deli(82 - len(PC_STR)) + \
+        print PC_STR + recur_deli(PAGE_DECO_2 - len(PC_STR)) + \
               str(TOTAL_PAGE_COUNT - DOC_PAGE_COUNT) + ' pages'
-        print PC_STR + recur_deli(PAGE_DECO - len(PC_STR) + 1) + \
+        print PC_STR + recur_deli(PAGE_DECO_3 - len(PC_STR) + 1) + \
               str(TOTAL_PAGE_COUNT) + ' pages'
         print LOC_STR + recur_deli(LOC_DECO - len(LOC_STR) + 1) + \
               str(TOTAL_LOC_INSERTION) + ' insertion(+), ' + \

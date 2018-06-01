@@ -201,7 +201,7 @@ def main():
         try:
             plist = gssh.Query('--commit-message',
                                'owner:' + user +
-                               ' AND (status:merged OR status:pending)' +
+                               ' AND status:merged' +
                                ' since:' + start_time).execute_on(rsite)
 
         # check invalid username
